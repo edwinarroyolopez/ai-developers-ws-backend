@@ -14,7 +14,7 @@
     <button onclick="sendMessage()">Send</button>
 
     <script>
-        const socket = io('http://localhost:4000');
+        const socket = io('https://ai-developers-ws-backend-production.up.railway.app');
 
         socket.emit('getMessages');
 
