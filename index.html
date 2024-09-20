@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Chat App</h1>
+    <div id="messages"></div>
+    <input id="username" type="text" placeholder="Username">
+    <input id="text" type="text" placeholder="Message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = io('http://localhost:4000');
+
+        socket.emit('getMessages');
+
+        socket.on('allMessages', (messages) => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = '';
+            messages.forEach(message => {
+                messagesDiv.innerHTML += `<p><strong>${message.username}:</strong> ${message.text}</p>`;
+            });
+        });
+
+        socket.on('receiveMessage', (message) => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `<p><strong>${message.username}:</strong> ${message.text}</p>`;
+        });
+
+        function sendMessage() {
+            const username = document.getElementById('username').value;
+            const text = document.getElementById('text').value;
+            socket.emit('sendMessage', { username, text });
+        }
+    </script>
+</body>
+</html>
