@@ -3,11 +3,11 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // Habilitar CORS para cualquier origen
+  // Configurar CORS para un origen específico
   app.enableCors({
-    origin: '*',  // Permitir cualquier origen
+    origin: 'https://ai-developers-ws-frontend-5drsn1gao-edwinarroyolopezs-projects.vercel.app', // El dominio del frontend en Vercel
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,  // Permite el uso de cookies, si es necesario
+    credentials: true,  // Permitir cookies y credenciales
   });
 
   await app.listen(4000);
