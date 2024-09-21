@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #chat {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    #messages {
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    #messages p {
+      margin: 5px 0;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1rem;
+    }
+    input {
+      width: 80%;
+    }
+    button {
+      width: 18%;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chat">
+  <h2>Chat App</h2>
+  <div id="messages"></div>
+
+  <input type="text" id="messageInput" placeholder="Enter your message" />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script>
+  const socket = io('http://localhost:5000');  // URL de tu servidor NestJS
+
+  const messagesDiv = document.getElementById('messages');
+  const messageInput = document.getElementById('messageInput');
+
+  // Escuchar todos los mensajes cuando el cliente se conecta
+  socket.on('allMessages', (messages) => {
+    messages.forEach((message) => {
+      addMessageToDOM(message.username, message.text);
+    });
+  });
+
+  // Escuchar nuevos mensajes y agregarlos al DOM
+  socket.on('newMessage', (message) => {
+    addMessageToDOM(message.username, message.text);
+  });
+
+  // Función para agregar un mensaje al DOM
+  function addMessageToDOM(username, text) {
+    const messageElement = document.createElement('p');
+    messageElement.innerHTML = `<strong>${username}:</strong> ${text}`;
+    messagesDiv.appendChild(messageElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;  // Desplazar hacia el final
+  }
+
+  // Función para enviar un mensaje
+  function sendMessage() {
+    const message = messageInput.value.trim();
+    if (message) {
+      socket.emit('createMessage', { username: 'User', text: message });
+      messageInput.value = '';  // Limpiar el campo de entrada
+    }
+  }
+</script>
+
+</body>
+</html>
